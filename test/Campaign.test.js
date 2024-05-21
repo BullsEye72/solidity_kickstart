@@ -67,19 +67,12 @@ describe("Campaigns", () => {
   });
 
   it("allows a manager to make a payment request", async () => {
-    // const gasEstimate = await campaign.methods
-    //   .createRequest("Buy batteries", "100", accounts[1])
-    //   .estimateGas({ from: accounts[1] });
-    // console.info(gasEstimate);
-    // assert(true);
-    // return;
     await campaign.methods.createRequest("Buy batteries", "100", accounts[1]).send({
       from: accounts[0],
       gas: gasAmount,
     });
     const request = await campaign.methods.requests(0).call();
-    console.info(request);
-    assert(true); //"Buy batteries", request.description);
+    assert("Buy batteries", request.description);
   });
 
   it("processes requests", async () => {
@@ -94,7 +87,6 @@ describe("Campaigns", () => {
       .createRequest("A", web3.utils.toWei("5", "ether"), accounts[1])
       .send({ from: accounts[0], gas: gasAmount });
 
-    console.info("=============================");
     await campaign.methods.approveRequest(0).send({ from: accounts[0], gas: gasAmount });
 
     await campaign.methods.finalizeRequest(0).send({ from: accounts[0], gas: gasAmount });
