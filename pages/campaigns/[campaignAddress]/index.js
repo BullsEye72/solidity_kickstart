@@ -1,8 +1,9 @@
 import React from "react";
 import Campaign from "../../../ethereum/campaing";
-import { CardGroup, Grid, GridColumn } from "semantic-ui-react";
+import { CardGroup, Grid, GridColumn, GridRow, Button } from "semantic-ui-react";
 import web3 from "../../../ethereum/web3";
 import ContributeForm from "../../../components/contributeForm";
+import Link from "next/link";
 
 const renderCards = ({ minimumContribution, balance, requestsCount, approversCount, manager }) => {
   // Check if all props exist and are in the expected format
@@ -59,10 +60,22 @@ const CampaignShow = (props) => {
       <h3>Campaign {props.campaignAddress}</h3>
 
       <Grid>
-        <GridColumn width={10}>{renderCards(props.summary)}</GridColumn>
-        <GridColumn width={6}>
-          <ContributeForm address={props.campaignAddress} />
-        </GridColumn>
+        <GridRow>
+          <GridColumn width={10}>{renderCards(props.summary)}</GridColumn>
+          <GridColumn width={6}>
+            <ContributeForm address={props.campaignAddress} />
+          </GridColumn>
+        </GridRow>
+
+        <GridRow>
+          <GridColumn>
+            <Link href={`/campaigns/${props.campaignAddress}/requests/`}>
+              <a>
+                <Button primary>View Requests</Button>
+              </a>
+            </Link>
+          </GridColumn>
+        </GridRow>
       </Grid>
     </>
   );
