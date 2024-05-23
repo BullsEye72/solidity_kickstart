@@ -4,11 +4,19 @@ pragma solidity ^0.8.9;
 contract CampaignFactory {
     address[] public deployedCampaigns;
 
+    /**
+     * @dev Creates a new campaign contract.
+     * @param minimum The minimum contribution required to join the campaign.
+     */
     function createCampaign(uint minimum) public {
         address newCampaign = address(new Campaign(minimum, msg.sender));
         deployedCampaigns.push(newCampaign);
     }
 
+    /**
+     * @dev Returns the list of deployed campaign contracts.
+     * @return An array of addresses representing the deployed campaign contracts.
+     */
     function getDeployedCampaigns() public view returns (address[] memory) {
         return deployedCampaigns;
     }
@@ -31,11 +39,24 @@ contract Campaign {
     uint256 numRequests;
     Request[] public requests;
 
+    /**
+     * @dev Creates a new campaign.
+     * @param minimum The minimum contribution required to join the campaign.
+     * @param creator The address of the campaign creator.
+     */
     constructor(uint minimum, address creator) {
         manager = creator;
         minimumContribution = minimum;
     }
 
+    modifier restricted() {
+        require(msg.sender == manager, "Is not a manager");
+        _;
+    }
+
+    /**
+     * @dev Allows a user to contribute to the campaign.
+     */
     function contribute() public payable {
         require(
             msg.value >= minimumContribution,
@@ -47,6 +68,12 @@ contract Campaign {
         approversCount++;
     }
 
+    /**
+     * @dev Creates a new spending request.
+     * @param description The description of the spending request.
+     * @param value The amount of funds requested.
+     * @param recipient The address of the recipient of the funds.
+     */
     function createRequest(
         string memory description,
         uint value,
@@ -60,6 +87,10 @@ contract Campaign {
         newRequest.approvalCount = 0;
     }
 
+    /**
+     * @dev Allows an approver to approve a spending request.
+     * @param index The index of the spending request to approve.
+     */
     function approveRequest(uint index) public {
         Request storage request = requests[index];
 
@@ -70,6 +101,10 @@ contract Campaign {
         request.approvalCount++;
     }
 
+    /**
+     * @dev Finalizes a spending request and transfers the funds to the recipient.
+     * @param index The index of the spending request to finalize.
+     */
     function finalizeRequest(uint index) public restricted {
         Request storage request = requests[index];
 
@@ -80,8 +115,9 @@ contract Campaign {
         request.complete = true;
     }
 
-    modifier restricted() {
-        require(msg.sender == manager, "Is not a manager");
-        _;
-    }
+    /**
+     * @dev Returns the summary of the campaign.
+     * @return The campaign manager, minimum contribution, number of approvers, and number of spending requests.
+     */
+    function getSummary() public view returns () {}
 }

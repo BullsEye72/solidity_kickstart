@@ -1,13 +1,14 @@
 const HDWalletProvider = require("@truffle/hdwallet-provider");
 const { Web3 } = require("web3");
-const { abi, evm } = require("./compile");
-//updated web3 and hdwallet-provider imports added for convenience
+const compiledFactory = require("./build/CampaignFactory.json");
+require("dotenv").config();
 
-// deploy code will go here
-const provider = new HDWalletProvider(
-  "laugh cotton mouse relax spirit organ recall quiz rather final today fiscal",
-  "https://sepolia.infura.io/v3/f5d322cbbaa5485696c518e6454c1b72"
-);
+if (!process.env.MNEMONIC || !process.env.SEPOLIA_URL) {
+  console.error("Please set a MNEMONIC and SEPOLIA_URL in your .env file");
+  return;
+}
+
+const provider = new HDWalletProvider(process.env.MNEMONIC, process.env.SEPOLIA_URL);
 const web3 = new Web3(provider);
 
 const deploy = async () => {
@@ -15,11 +16,10 @@ const deploy = async () => {
 
   console.log("Attempting to deploy from account", accounts[0]);
 
-  const result = await new web3.eth.Contract(abi)
-    .deploy({ data: evm.bytecode.object })
-    .send({ gas: 1000000, from: accounts[0] });
+  const result = await new web3.eth.Contract(compiledFactory.abi)
+    .deploy({ data: compiledFactory.evm.bytecode.object })
+    .send({ gas: 2000000, from: accounts[0] });
 
-  console.log(JSON.stringify(abi));
   console.log("Contract deployed to ", result.options.address);
 
   provider.engine.stop();
