@@ -1,15 +1,27 @@
 import React from "react";
 import { useRouter } from "next/router";
 
-const Campaign = () => {
-  const router = useRouter();
-  const { campaignAddress } = router.query;
-
+const CampaignShow = ({ campaignAddress }) => {
   return (
-    <div>
+    <>
       <h3>Campaign {campaignAddress}</h3>
-    </div>
+    </>
   );
 };
 
-export default Campaign;
+export async function getServerSideProps(context) {
+  // Fetch data for the campaign using the campaignAddress from the query parameters
+  const { campaignAddress } = context.query;
+
+  // Perform API call or database query to fetch campaign data
+  //const campaignData = await fetchCampaignData(campaignAddress);
+
+  // Pass the campaign data as props to the component
+  return {
+    props: {
+      campaignAddress,
+    },
+  };
+}
+
+export default CampaignShow;

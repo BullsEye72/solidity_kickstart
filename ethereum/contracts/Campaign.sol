@@ -119,5 +119,25 @@ contract Campaign {
      * @dev Returns the summary of the campaign.
      * @return The campaign manager, minimum contribution, number of approvers, and number of spending requests.
      */
-    function getSummary() public view returns () {}
+    function getSummary()
+        public
+        view
+        returns (uint, uint, uint, uint, address)
+    {
+        return (
+            minimumContribution,
+            address(this).balance,
+            requests.length,
+            approversCount,
+            manager
+        );
+    }
+
+    /**
+     * @dev Returns the number of requests created in the campaign.
+     * @return The count of requests.
+     */
+    function getRequestsCount() public view returns (uint) {
+        return requests.length;
+    }
 }
